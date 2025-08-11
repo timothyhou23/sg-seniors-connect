@@ -1,0 +1,68 @@
+import { useEffect, useRef, useState } from "react";
+import { Mic, Square } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+
+export default function MicButton({ size = 64 }: { size?: number }) {
+  const [listening, setListening] = useState(false);
+  const [supported, setSupported] = useState(false);
+  const recognitionRef = useRef<any>(null);
+  const nav = useNavigate();
+
+  useEffect(() => {
+    // Web Speech API availability
+    const SR: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SR) {
+      setSupported(true);
+      const r = new SR();
+      r.lang = "en-SG";
+      r.interimResults = true;
+      r.maxAlternatives = 1;
+      r.onresult = (e: any) => {
+        const last = e.results[e.results.length - 1];
+        if (last.isFinal) {
+          const transcript = last[0].transcript;
+          nav(`/search?q=${encodeURIComponent(transcript)}`);
+          setListening(false);
+          r.stop();
+        }
+      };
+      r.onend = () => setListening(false);
+      recognitionRef.current = r;
+    }
+  }, [nav]);
+
+  const toggle = () => {
+    const r = recognitionRef.current;
+    if (!r) return;
+    if (listening) {
+      r.stop();
+      setListening(false);
+    } else {
+      try {
+        r.start();
+        setListening(true);
+      } catch {}
+    }
+  };
+
+  if (!supported)
+    return (
+      <Button variant="hero" className="rounded-full h-14 w-14 p-0" onClick={() => nav("/search")}> 
+        <Mic className="h-6 w-6" />
+      </Button>
+    );
+
+  return (
+    <button
+      aria-label={listening ? "Stop listening" : "Start voice"}
+      onClick={toggle}
+      className={`rounded-full flex items-center justify-center text-primary-foreground shadow-glow ${
+        listening ? "bg-accent animate-pulse-glow" : "bg-gradient-primary"
+      }`}
+      style={{ width: size, height: size }}
+    >
+      {listening ? <Square className="h-7 w-7" /> : <Mic className="h-7 w-7" />}
+    </button>
+  );
+}

@@ -26,8 +26,8 @@ All colors MUST be HSL.
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 214 92% 56%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -36,23 +36,31 @@ All colors MUST be HSL.
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Elevated design tokens */
+    --primary-glow: 222.2 84% 60%;
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(210 40% 98%));
+    --shadow-elegant: 0 12px 28px -8px hsl(var(--primary) / 0.25);
+    --shadow-glow: 0 0 42px hsl(var(--accent) / 0.35);
+
+    /* Status tokens */
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --danger: 0 84% 60%;
+
+    /* Accessibility / typography */
+    --font-scale: 1;
   }
 
   .dark {
@@ -74,8 +82,8 @@ All colors MUST be HSL.
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 214 92% 56%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
@@ -92,6 +100,15 @@ All colors MUST be HSL.
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  /* High contrast mode override */
+  .high-contrast {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --border: 222.2 47.4% 11.2%;
+    --ring: 214 92% 56%;
+    --accent: 214 92% 46%;
+  }
 }
 
 @layer base {
@@ -101,5 +118,17 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-size: calc(1rem * var(--font-scale));
+    -webkit-tap-highlight-color: transparent;
   }
+}
+
+@layer utilities {
+  .bg-gradient-primary { background-image: var(--gradient-primary); }
+  .shadow-elegant { box-shadow: var(--shadow-elegant); }
+  .shadow-glow { box-shadow: var(--shadow-glow); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .badge-success { color: hsl(var(--success)); background-color: hsl(var(--success) / 0.12); }
+  .badge-warning { color: hsl(var(--warning)); background-color: hsl(var(--warning) / 0.12); }
+  .badge-danger { color: hsl(var(--danger)); background-color: hsl(var(--danger) / 0.12); }
 }
