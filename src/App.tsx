@@ -12,6 +12,26 @@ import Reminders from "./pages/Reminders";
 import Settings from "./pages/Settings";
 import Splash from "./pages/Splash";
 import { AppStateProvider } from "./context/AppState";
+import { useReminderNotifications } from "./hooks/useReminderNotifications";
+
+function AppWithNotifications() {
+  // Enable global reminder notifications
+  useReminderNotifications();
+  
+  return (
+    <Routes>
+      <Route path="/" element={<Splash />} />
+      <Route path="/home" element={<Home />} />
+      <Route path="/search" element={<SearchPage />} />
+      <Route path="/details/:type/:id" element={<Details />} />
+      <Route path="/saved" element={<Saved />} />
+      <Route path="/reminders" element={<Reminders />} />
+      <Route path="/settings" element={<Settings />} />
+      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
 
 const queryClient = new QueryClient();
 
@@ -22,17 +42,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AppStateProvider>
-          <Routes>
-            <Route path="/" element={<Splash />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/details/:type/:id" element={<Details />} />
-            <Route path="/saved" element={<Saved />} />
-            <Route path="/reminders" element={<Reminders />} />
-            <Route path="/settings" element={<Settings />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AppWithNotifications />
         </AppStateProvider>
       </BrowserRouter>
     </TooltipProvider>
