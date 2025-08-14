@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useFeed } from "@/hooks/useFeed";
-import { MapPin, Calendar, Clock, ExternalLink } from "lucide-react";
+import { MapPin, Calendar, Clock, ExternalLink, Bell } from "lucide-react";
 
 export default function Details() {
   const { type, id } = useParams();
-  const { toggleBookmark, bookmarks } = useAppState();
+  const { toggleBookmark, bookmarks, addReminder } = useAppState();
   const { feed } = useFeed();
   const item = feed.find(i => i.id === id && i.type === type);
 
@@ -26,6 +26,15 @@ export default function Details() {
     if (item.type === 'benefit' && (item as any).source_url) {
       window.open((item as any).source_url, '_blank');
     }
+  };
+
+  const handleAddReminder = () => {
+    addReminder({
+      itemId: item.id,
+      itemType: item.type,
+      title: `Reminder: ${item.title}`,
+      scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours from now
+    });
   };
 
   const formatDate = (dateString: string) => {
@@ -142,6 +151,13 @@ export default function Details() {
                 onClick={() => toggleBookmark(item.id)}
               >
                 {bookmarks.includes(item.id) ? 'Saved' : 'Save'}
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={handleAddReminder}
+              >
+                <Bell className="h-4 w-4 mr-2" />
+                Remind me
               </Button>
               <Button 
                 variant="outline" 
