@@ -1,4 +1,4 @@
-import { Mic, Search, Bookmark, Bell, Settings as Cog } from "lucide-react";
+import { Mic, Search, Bookmark, Bell, Settings as Cog, Home } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 export default function BottomNav() {
@@ -9,7 +9,7 @@ export default function BottomNav() {
       <div className="max-w-md mx-auto grid grid-cols-5 items-center py-2">
         <NavLink to="/home" className={getCls}>
           <div className="flex flex-col items-center text-xs">
-            <Search className="h-6 w-6" />
+            <Home className="h-6 w-6" />
             <span>Home</span>
           </div>
         </NavLink>
@@ -28,10 +28,10 @@ export default function BottomNav() {
             <span>Saved</span>
           </div>
         </NavLink>
-        <NavLink to="/settings" className={getCls}>
+        <NavLink to="/reminders" className={getCls}>
           <div className="flex flex-col items-center text-xs">
-            <Cog className="h-6 w-6" />
-            <span>Settings</span>
+            <Bell className="h-6 w-6" />
+            <span>Reminders</span>
           </div>
         </NavLink>
       </div>

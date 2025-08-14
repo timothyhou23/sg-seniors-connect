@@ -12,7 +12,7 @@ const TABS = ["All", "Benefits", "Events"] as const;
 type Tab = typeof TABS[number];
 
 export default function Home() {
-  const { bookmarks, toggleBookmark } = useAppState();
+  const { bookmarks, toggleBookmark, addReminder } = useAppState();
   const { feed, loading, error, refreshFeed } = useFeed();
   const [tab, setTab] = useState<Tab>("All");
   useEffect(() => { document.title = "SeniorGo SG — Home"; }, []);
@@ -64,7 +64,7 @@ export default function Home() {
             </CardHeader>
             <CardContent className="pt-0">
               {item.type === 'event' && (
-                <p className="text-sm text-muted-foreground mb-2">{item.date && new Date(item.date).toLocaleString()} • {item.venue?.name} {item.distanceKm?`• ${item.distanceKm}km`:''}</p>
+                <p className="text-sm text-muted-foreground mb-2">{(item as any).event_date && new Date((item as any).event_date).toLocaleString()} • {item.venue?.name} {item.distanceKm?`• ${item.distanceKm}km`:''}</p>
               )}
               <div className="flex gap-2">
                 <Link to={`/details/${item.type}/${item.id}`}>
@@ -76,7 +76,14 @@ export default function Home() {
                 <Button size="sm" variant="outline" onClick={() => navigator.share?.({ title: item.title, text: item.summary, url: window.location.href })}>
                   <Share2 className="mr-1" /> Share
                 </Button>
-                <Button size="sm" variant="outline">
+                <Button size="sm" variant="outline" onClick={() => {
+                  addReminder({
+                    itemId: item.id,
+                    itemType: item.type,
+                    title: `Reminder: ${item.title}`,
+                    scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours from now
+                  });
+                }}>
                   <Bell className="mr-1" /> Remind me
                 </Button>
               </div>
