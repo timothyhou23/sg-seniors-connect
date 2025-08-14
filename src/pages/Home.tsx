@@ -7,6 +7,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useFeed } from "@/hooks/useFeed";
 import { useToast } from "@/hooks/use-toast";
+import heroImage from "@/assets/hero-image.jpg";
+import benefitsIcon from "@/assets/benefits-icon.jpg";
+import eventsIcon from "@/assets/events-icon.jpg";
 
 const TABS = ["All", "Benefits", "Events"] as const;
 
@@ -44,17 +47,33 @@ export default function Home() {
 
   return (
     <AppLayout title="My Lobang Kaki" subtitle="Try: events near Bishan this weekend">
+      {/* Hero Image Section */}
+      <div className="relative mb-6 -mx-4 rounded-lg overflow-hidden">
+        <img 
+          src={heroImage} 
+          alt="Singapore community for seniors" 
+          className="w-full h-32 object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
+      </div>
+
       <div className="flex flex-wrap gap-2 mb-4">
         {TABS.map(t => (
           <button 
             key={t} 
             onClick={() => setTab(t)} 
-            className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-colors ${
               tab === t 
                 ? "bg-primary text-primary-foreground border-primary" 
                 : "bg-background text-muted-foreground border-border hover:bg-accent hover:text-accent-foreground"
             }`}
           >
+            {t === "Benefits" && (
+              <img src={benefitsIcon} alt="" className="w-4 h-4 rounded-full" />
+            )}
+            {t === "Events" && (
+              <img src={eventsIcon} alt="" className="w-4 h-4 rounded-full" />
+            )}
             {t}
           </button>
         ))}
@@ -62,10 +81,19 @@ export default function Home() {
 
       <div className="space-y-4">
         {list.map(item => (
-          <Card key={item.id} className="overflow-hidden">
+          <Card key={item.id} className="overflow-hidden border-l-4 border-l-primary/30 hover:border-l-primary transition-colors">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{item.title}</CardTitle>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                    <img 
+                      src={item.type === 'benefit' ? benefitsIcon : eventsIcon} 
+                      alt="" 
+                      className="w-6 h-6 rounded-full"
+                    />
+                  </div>
+                  <CardTitle className="text-lg">{item.title}</CardTitle>
+                </div>
                 <span className={`text-xs px-2 py-1 rounded-full border ${item.eligibility === 'ELIGIBLE' ? 'text-green-700 bg-green-50' : item.eligibility === 'MAYBE' ? 'text-amber-700 bg-amber-50' : 'text-red-700 bg-red-50'}`}>
                   {item.eligibility}
                 </span>
