@@ -57,10 +57,19 @@ export default function SearchPage() {
         />
         <Button onClick={() => nav(`/search?q=${encodeURIComponent(text)}`)}>Search</Button>
       </div>
-      <div className="flex gap-2 mb-4">
-        <Button size="sm" variant="outline" onClick={()=>setText("events near me this weekend")}>This weekend</Button>
-        <Button size="sm" variant="outline" onClick={()=>setText("free events nearby")}>Free nearby</Button>
-        <Button size="sm" variant="outline" onClick={()=>setText("benefits for PR over 60")}>Benefits 60+</Button>
+      <div className="flex gap-2 mb-4 flex-wrap">
+        <Button size="sm" variant="outline" onClick={() => {
+          setText("events near me this weekend");
+          nav(`/search?q=${encodeURIComponent("events near me this weekend")}`);
+        }}>This weekend</Button>
+        <Button size="sm" variant="outline" onClick={() => {
+          setText("free events nearby");
+          nav(`/search?q=${encodeURIComponent("free events nearby")}`);
+        }}>Free nearby</Button>
+        <Button size="sm" variant="outline" onClick={() => {
+          setText("benefits for PR over 60");
+          nav(`/search?q=${encodeURIComponent("benefits for PR over 60")}`);
+        }}>Benefits 60+</Button>
       </div>
 
       {!text && (

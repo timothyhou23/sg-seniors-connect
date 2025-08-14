@@ -6,11 +6,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useFeed } from "@/hooks/useFeed";
 import { MapPin, Calendar, Clock, ExternalLink, Bell } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Details() {
   const { type, id } = useParams();
   const { toggleBookmark, bookmarks, addReminder } = useAppState();
   const { feed } = useFeed();
+  const { toast } = useToast();
   const item = feed.find(i => i.id === id && i.type === type);
 
   if (!item) return <AppLayout title="Not found"><p>Item not found.</p></AppLayout>;
@@ -23,8 +25,9 @@ export default function Details() {
   };
 
   const handleCheckEligibility = () => {
-    if (item.type === 'benefit' && (item as any).source_url) {
-      window.open((item as any).source_url, '_blank');
+    if (item.type === 'benefit') {
+      // For benefits, open official government portal
+      window.open('https://www.gov.sg/features/seniors', '_blank');
     }
   };
 
@@ -34,6 +37,10 @@ export default function Details() {
       itemType: item.type,
       title: `Reminder: ${item.title}`,
       scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours from now
+    });
+    toast({
+      title: "Reminder set!",
+      description: "You'll be reminded tomorrow"
     });
   };
 
@@ -140,7 +147,6 @@ export default function Details() {
                 <Button 
                   variant="hero" 
                   onClick={handleCheckEligibility}
-                  disabled={!(item as any).source_url}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
                   Check Eligibility
@@ -148,7 +154,13 @@ export default function Details() {
               )}
               <Button 
                 variant="outline" 
-                onClick={() => toggleBookmark(item.id)}
+                onClick={() => {
+                  toggleBookmark(item.id);
+                  toast({
+                    title: bookmarks.includes(item.id) ? "Removed from saved" : "Saved!",
+                    description: bookmarks.includes(item.id) ? "Item removed from your saved list" : "Item added to your saved list"
+                  });
+                }}
               >
                 {bookmarks.includes(item.id) ? 'Saved' : 'Save'}
               </Button>
@@ -161,11 +173,38 @@ export default function Details() {
               </Button>
               <Button 
                 variant="outline" 
-                onClick={() => navigator.share?.({ 
-                  title: item.title, 
-                  text: item.summary, 
-                  url: window.location.href 
-                })}
+                onClick={() => {
+                  const url = window.location.href;
+                  if (navigator.share) {
+                    navigator.share({ 
+                      title: item.title, 
+                      text: item.summary, 
+                      url: url 
+                    }).catch(() => {
+                      // Fallback if share fails
+                      navigator.clipboard?.writeText(`${item.title} - ${item.summary} ${url}`)
+                        .then(() => {
+                          toast({
+                            title: "Link copied!",
+                            description: "Link copied to clipboard"
+                          });
+                        });
+                    });
+                  } else {
+                    // Fallback: copy to clipboard
+                    navigator.clipboard?.writeText(`${item.title} - ${item.summary} ${url}`)
+                      .then(() => {
+                        toast({
+                          title: "Link copied!",
+                          description: "Link copied to clipboard"
+                        });
+                      })
+                      .catch(() => {
+                        // Final fallback: just open the URL
+                        window.open(url, '_blank');
+                      });
+                  }
+                }}
               >
                 Share
               </Button>
