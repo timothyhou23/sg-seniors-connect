@@ -51,8 +51,11 @@ All colors MUST be HSL.
     --primary-glow: 210 83% 65%;
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(48 25% 88%));
+    --gradient-depth: linear-gradient(145deg, hsl(var(--background)) 0%, hsl(48 20% 90%) 25%, hsl(var(--background)) 50%, hsl(48 15% 95%) 75%, hsl(var(--background)) 100%);
     --shadow-elegant: 0 12px 28px -8px hsl(var(--primary) / 0.25);
     --shadow-glow: 0 0 42px hsl(var(--primary) / 0.35);
+    --shadow-depth: 0 4px 20px -2px hsl(220 20% 20% / 0.08), 0 2px 8px -1px hsl(220 20% 20% / 0.04);
+    --shadow-texture: inset 0 1px 0 hsl(0 0% 100% / 0.1), inset 0 -1px 0 hsl(220 20% 20% / 0.05);
 
     /* Status tokens */
     --success: 142 71% 45%;
@@ -125,10 +128,31 @@ All colors MUST be HSL.
 
 @layer utilities {
   .bg-gradient-primary { background-image: var(--gradient-primary); }
+  .bg-gradient-depth { background-image: var(--gradient-depth); }
   .shadow-elegant { box-shadow: var(--shadow-elegant); }
   .shadow-glow { box-shadow: var(--shadow-glow); }
+  .shadow-depth { box-shadow: var(--shadow-depth); }
+  .shadow-texture { box-shadow: var(--shadow-texture); }
   .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
   .badge-success { color: hsl(var(--success)); background-color: hsl(var(--success) / 0.12); }
   .badge-warning { color: hsl(var(--warning)); background-color: hsl(var(--warning) / 0.12); }
   .badge-danger { color: hsl(var(--danger)); background-color: hsl(var(--danger) / 0.12); }
+  
+  /* Texture utilities */
+  .texture-subtle {
+    background-image: 
+      radial-gradient(circle at 1px 1px, hsl(220 20% 20% / 0.05) 1px, transparent 0);
+    background-size: 20px 20px;
+  }
+  
+  .texture-grain {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
+  }
+  
+  .card-texture {
+    background: 
+      linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card)) 100%),
+      radial-gradient(circle at 0 0, hsl(0 0% 100% / 0.05) 0%, transparent 50%);
+    box-shadow: var(--shadow-texture), var(--shadow-depth);
+  }
 }

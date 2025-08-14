@@ -47,13 +47,20 @@ export default function Home() {
   return (
     <AppLayout title="My Lobang Kaki" subtitle="Try: events near Bishan this weekend">
       {/* Hero Image Section */}
-      <div className="relative mb-6 -mx-4 rounded-lg overflow-hidden">
-        <img 
-          src="/lovable-uploads/f530809c-81ed-45c4-9630-e16ee2396333.png" 
-          alt="Multicultural Singapore seniors sharing a meal together" 
-          className="w-full h-32 object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
+      <div className="relative mb-6 -mx-4 rounded-lg overflow-hidden shadow-elegant">
+        <div className="relative">
+          <img 
+            src="/lovable-uploads/f530809c-81ed-45c4-9630-e16ee2396333.png" 
+            alt="Multicultural Singapore seniors sharing a meal together" 
+            className="w-full h-40 object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent"></div>
+          <div className="absolute inset-0 texture-grain opacity-20"></div>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <h2 className="text-white text-lg font-semibold drop-shadow-lg">Your Singapore Community Hub</h2>
+          <p className="text-white/90 text-sm drop-shadow-md">Discover benefits and events crafted for you</p>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-2 mb-4">
@@ -80,24 +87,35 @@ export default function Home() {
 
       <div className="space-y-4">
         {list.map(item => (
-          <Card key={item.id} className="overflow-hidden border-l-4 border-l-primary/30 hover:border-l-primary transition-colors">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                    <img 
-                      src={item.type === 'benefit' ? benefitsIcon : eventsIcon} 
-                      alt="" 
-                      className="w-6 h-6 rounded-full"
-                    />
-                  </div>
-                  <CardTitle className="text-lg">{item.title}</CardTitle>
+          <Card key={item.id} className="overflow-hidden card-texture border-l-4 border-l-primary/30 hover:border-l-primary hover:shadow-glow transition-all duration-300">
+            {/* Enhanced Card Header with Image */}
+            <div className="relative">
+              <div className="h-20 bg-gradient-to-r from-primary/8 to-accent/8 relative overflow-hidden">
+                <img 
+                  src={item.type === 'benefit' ? benefitsIcon : eventsIcon} 
+                  alt={`${item.type} illustration`}
+                  className="absolute right-3 top-3 w-12 h-12 object-cover rounded-lg opacity-60 shadow-sm"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-background/60 to-transparent"></div>
+                <div className="absolute bottom-2 right-2">
+                  <span className={`text-xs px-2 py-1 rounded-full shadow-sm ${
+                    item.eligibility === 'ELIGIBLE' ? 'badge-success' : 
+                    item.eligibility === 'MAYBE' ? 'badge-warning' : 'badge-danger'
+                  }`}>
+                    {item.eligibility === 'ELIGIBLE' ? '✓ Eligible' :
+                     item.eligibility === 'MAYBE' ? '? Maybe' : '✗ Not Eligible'}
+                  </span>
                 </div>
-                <span className={`text-xs px-2 py-1 rounded-full border ${item.eligibility === 'ELIGIBLE' ? 'text-green-700 bg-green-50' : item.eligibility === 'MAYBE' ? 'text-amber-700 bg-amber-50' : 'text-red-700 bg-red-50'}`}>
-                  {item.eligibility}
-                </span>
               </div>
-              <CardDescription>{item.summary}</CardDescription>
+            </div>
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center shadow-sm">
+                  <div className="w-2 h-2 rounded-full bg-primary/60"></div>
+                </div>
+                <CardTitle className="text-lg">{item.title}</CardTitle>
+              </div>
+              <CardDescription className="text-sm leading-relaxed">{item.summary}</CardDescription>
             </CardHeader>
             <CardContent className="pt-0">
               {item.type === 'event' && (

@@ -5,9 +5,9 @@ import backgroundPattern from "@/assets/background-pattern.jpg";
 export default function AppLayout({ children, title, subtitle }: { children: React.ReactNode; title?: string; subtitle?: string; }) {
   return (
     <div className="min-h-screen relative">
-      {/* Background Pattern */}
+      {/* Layered Background with Depth */}
       <div 
-        className="fixed inset-0 opacity-5 pointer-events-none"
+        className="fixed inset-0 opacity-8 pointer-events-none"
         style={{
           backgroundImage: `url(${backgroundPattern})`,
           backgroundSize: 'cover',
@@ -15,7 +15,10 @@ export default function AppLayout({ children, title, subtitle }: { children: Rea
           backgroundRepeat: 'no-repeat'
         }}
       ></div>
-      <div className="relative bg-gradient-to-b from-background/95 via-background/98 to-background min-h-screen">
+      <div className="fixed inset-0 bg-gradient-depth pointer-events-none"></div>
+      <div className="fixed inset-0 texture-grain pointer-events-none"></div>
+      <div className="fixed inset-0 texture-subtle pointer-events-none"></div>
+      <div className="relative bg-gradient-to-b from-background/90 via-background/95 to-background/98 min-h-screen">
         <header className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b">
         <div className="max-w-md mx-auto px-4 py-3">
           <h1 className="text-xl font-semibold">{title ?? "SeniorGo SG"}</h1>
