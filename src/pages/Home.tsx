@@ -7,7 +7,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useFeed } from "@/hooks/useFeed";
 import { useToast } from "@/hooks/use-toast";
-import heroImage from "@/assets/hero-image.jpg";
 import benefitsIcon from "@/assets/benefits-icon.jpg";
 import eventsIcon from "@/assets/events-icon.jpg";
 
@@ -50,8 +49,8 @@ export default function Home() {
       {/* Hero Image Section */}
       <div className="relative mb-6 -mx-4 rounded-lg overflow-hidden">
         <img 
-          src={heroImage} 
-          alt="Singapore community for seniors" 
+          src="/lovable-uploads/f530809c-81ed-45c4-9630-e16ee2396333.png" 
+          alt="Multicultural Singapore seniors sharing a meal together" 
           className="w-full h-32 object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
