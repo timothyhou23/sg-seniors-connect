@@ -41,7 +41,7 @@ export default function Home() {
   }
 
   return (
-    <AppLayout title="Eh hello! What can I help you with?" subtitle="Try: events near Bishan this weekend">
+    <AppLayout title="My Lobang Kaki" subtitle="Try: events near Bishan this weekend">
       <div className="flex gap-2 mb-4">
         {TABS.map(t => (
           <button key={t} onClick={() => setTab(t)} className={`px-3 py-2 rounded-full border ${tab===t?"bg-primary text-primary-foreground":"bg-secondary text-secondary-foreground"}`}>
