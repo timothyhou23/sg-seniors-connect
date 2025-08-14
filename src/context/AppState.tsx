@@ -41,7 +41,6 @@ type AppState = {
   permissions: Permissions;
   bookmarks: string[]; // item ids
   reminders: Reminder[];
-  feed: FeedItem[];
   setLang: (l: Language) => void;
   setAccessibility: (a: Partial<Accessibility>) => void;
   setPermissions: (p: Partial<Permissions>) => void;
@@ -54,43 +53,12 @@ const AppStateContext = createContext<AppState | null>(null);
 
 const STORAGE_KEY = "seniorgo_app_state_v1";
 
-const initialFeed: FeedItem[] = [
-  {
-    id: "b1",
-    type: "benefit",
-    title: "Pioneer Generation Benefits",
-    summary: "Healthcare subsidies and CHAS support for seniors.",
-    eligibility: "MAYBE",
-  },
-  {
-    id: "e1",
-    type: "event",
-    title: "Tai Chi @ Bishan Park",
-    summary: "Gentle movement for balance and health.",
-    date: new Date(Date.now() + 86400000).toISOString(),
-    venue: { name: "Bishan Park", address: "1387 Ang Mo Kio Ave 1" },
-    eligibility: "ELIGIBLE",
-    distanceKm: 2.1,
-  },
-  {
-    id: "e2",
-    type: "event",
-    title: "Hawker Trail: Toa Payoh",
-    summary: "Discover heritage hawker gems with the community.",
-    date: new Date(Date.now() + 3 * 86400000).toISOString(),
-    venue: { name: "Toa Payoh", address: "Central" },
-    eligibility: "ELIGIBLE",
-    distanceKm: 4.5,
-  },
-];
-
 export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Language>("en");
   const [accessibility, setAccessibilityState] = useState<Accessibility>({ fontScale: 1, highContrast: false });
   const [permissions, setPermissionsState] = useState<Permissions>({ location: false, notifications: false, mic: false });
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [reminders, setReminders] = useState<Reminder[]>([]);
-  const [feed] = useState<FeedItem[]>(initialFeed);
 
   // load
   useEffect(() => {
@@ -125,9 +93,9 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const removeReminder = (id: string) => setReminders(prev => prev.filter(r => r.id !== id));
 
   const value = useMemo<AppState>(() => ({
-    lang, accessibility, permissions, bookmarks, reminders, feed,
+    lang, accessibility, permissions, bookmarks, reminders,
     setLang, setAccessibility, setPermissions, toggleBookmark, addReminder, removeReminder,
-  }), [lang, accessibility, permissions, bookmarks, reminders, feed]);
+  }), [lang, accessibility, permissions, bookmarks, reminders]);
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
 }

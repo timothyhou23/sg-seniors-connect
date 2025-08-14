@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppState } from "@/context/AppState";
+import { useFeed } from "@/hooks/useFeed";
 
 function useQuery() {
   const { search } = useLocation();
@@ -15,7 +16,7 @@ function useQuery() {
 export default function SearchPage() {
   const q = useQuery();
   const [text, setText] = useState(q.get("q") ?? "");
-  const { feed } = useAppState();
+  const { feed } = useFeed();
   const nav = useNavigate();
 
   useEffect(() => { document.title = "SeniorGo SG — Search"; }, []);

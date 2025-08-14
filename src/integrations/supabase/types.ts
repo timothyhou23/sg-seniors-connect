@@ -14,6 +14,102 @@ export type Database = {
   }
   public: {
     Tables: {
+      benefits: {
+        Row: {
+          apply_deadline: string | null
+          categories: string[] | null
+          created_at: string
+          description: string | null
+          eligibility_status: string | null
+          id: string
+          source_url: string | null
+          summary: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          apply_deadline?: string | null
+          categories?: string[] | null
+          created_at?: string
+          description?: string | null
+          eligibility_status?: string | null
+          id?: string
+          source_url?: string | null
+          summary: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          apply_deadline?: string | null
+          categories?: string[] | null
+          created_at?: string
+          description?: string | null
+          eligibility_status?: string | null
+          id?: string
+          source_url?: string | null
+          summary?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          categories: string[] | null
+          created_at: string
+          description: string | null
+          distance_km: number | null
+          eligibility_status: string | null
+          event_date: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          organizer: string | null
+          registration_url: string | null
+          summary: string
+          title: string
+          updated_at: string
+          venue_address: string | null
+          venue_name: string | null
+        }
+        Insert: {
+          categories?: string[] | null
+          created_at?: string
+          description?: string | null
+          distance_km?: number | null
+          eligibility_status?: string | null
+          event_date?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          organizer?: string | null
+          registration_url?: string | null
+          summary: string
+          title: string
+          updated_at?: string
+          venue_address?: string | null
+          venue_name?: string | null
+        }
+        Update: {
+          categories?: string[] | null
+          created_at?: string
+          description?: string | null
+          distance_km?: number | null
+          eligibility_status?: string | null
+          event_date?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          organizer?: string | null
+          registration_url?: string | null
+          summary?: string
+          title?: string
+          updated_at?: string
+          venue_address?: string | null
+          venue_name?: string | null
+        }
+        Relationships: []
+      }
       list_members: {
         Row: {
           created_at: string

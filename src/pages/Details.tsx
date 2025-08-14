@@ -3,10 +3,12 @@ import { useParams } from "react-router-dom";
 import { useAppState } from "@/context/AppState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useFeed } from "@/hooks/useFeed";
 
 export default function Details() {
   const { type, id } = useParams();
-  const { feed, toggleBookmark, bookmarks } = useAppState();
+  const { toggleBookmark, bookmarks } = useAppState();
+  const { feed } = useFeed();
   const item = feed.find(i => i.id === id && i.type === type);
 
   if (!item) return <AppLayout title="Not found"><p>Item not found.</p></AppLayout>;

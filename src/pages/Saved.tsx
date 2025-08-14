@@ -3,9 +3,11 @@ import { useAppState } from "@/context/AppState";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useFeed } from "@/hooks/useFeed";
 
 export default function Saved() {
-  const { bookmarks, feed, toggleBookmark } = useAppState();
+  const { bookmarks, toggleBookmark } = useAppState();
+  const { feed } = useFeed();
   const items = feed.filter(i => bookmarks.includes(i.id));
 
   return (
