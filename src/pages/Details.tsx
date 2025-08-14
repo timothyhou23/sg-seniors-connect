@@ -24,10 +24,30 @@ export default function Details() {
     }
   };
 
+  const handleRegisterEvent = () => {
+    if (item.type === 'event') {
+      const eventData = feed.find(f => f.id === id && f.type === 'event') as any;
+      if (eventData?.registration_url) {
+        window.open(eventData.registration_url, '_blank');
+      } else {
+        toast({
+          title: "Registration not available",
+          description: "Please contact the organizer directly for registration details.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   const handleCheckEligibility = () => {
     if (item.type === 'benefit') {
-      // For benefits, open official government portal
-      window.open('https://www.gov.sg/features/seniors', '_blank');
+      const benefitData = feed.find(f => f.id === id && f.type === 'benefit') as any;
+      if (benefitData?.source_url) {
+        window.open(benefitData.source_url, '_blank');
+      } else {
+        // Fallback to general government portal
+        window.open('https://www.gov.sg/features/seniors', '_blank');
+      }
     }
   };
 
@@ -135,21 +155,30 @@ export default function Details() {
 
             <div className="flex gap-2 flex-wrap pt-4">
               {item.type === 'event' ? (
-                <Button 
-                  variant="hero" 
-                  onClick={handleGetDirections}
-                  disabled={!item.venue?.address}
-                >
-                  <MapPin className="h-4 w-4 mr-2" />
-                  Get Directions
-                </Button>
+                <>
+                  <Button 
+                    variant="hero" 
+                    onClick={handleRegisterEvent}
+                  >
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    Register Now
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={handleGetDirections}
+                    disabled={!item.venue?.address}
+                  >
+                    <MapPin className="h-4 w-4 mr-2" />
+                    Get Directions
+                  </Button>
+                </>
               ) : (
                 <Button 
                   variant="hero" 
                   onClick={handleCheckEligibility}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
-                  Check Eligibility
+                  Visit Official Site
                 </Button>
               )}
               <Button 
