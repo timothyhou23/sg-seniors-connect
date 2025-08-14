@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { Mic, Square, MicOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export default function MicButton({ size = 64 }: { size?: number }) {
   const [listening, setListening] = useState(false);
   const [supported, setSupported] = useState(false);
-  const [permissionGranted, setPermissionGranted] = useState(false);
+  const [permissionState, setPermissionState] = useState<'unknown' | 'granted' | 'denied'>('unknown');
   const recognitionRef = useRef<any>(null);
   const nav = useNavigate();
   const { toast } = useToast();
@@ -54,14 +54,14 @@ export default function MicButton({ size = 64 }: { size?: number }) {
             description: "Please allow microphone access to use voice search",
             variant: "destructive",
           });
-          setPermissionGranted(false);
+          setPermissionState('denied');
         } else if (e.error === 'not-allowed') {
           toast({
             title: "Permission denied",
             description: "Microphone permission was denied. Please enable it in browser settings.",
             variant: "destructive",
           });
-          setPermissionGranted(false);
+          setPermissionState('denied');
         } else {
           toast({
             title: "Voice recognition error",
@@ -80,80 +80,88 @@ export default function MicButton({ size = 64 }: { size?: number }) {
     }
   }, [nav, toast]);
 
-  const requestMicrophonePermission = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      // Stop the stream immediately, we just needed permission
-      stream.getTracks().forEach(track => track.stop());
-      setPermissionGranted(true);
-      return true;
-    } catch (error) {
-      console.error('Microphone permission error:', error);
-      setPermissionGranted(false);
-      toast({
-        title: "Microphone access required",
-        description: "Please allow microphone access to use voice search",
-        variant: "destructive",
-      });
-      return false;
+  const handleClick = async () => {
+    console.log('Mic button clicked, current state:', { listening, supported, permissionState });
+    
+    // If not supported, navigate to search
+    if (!supported) {
+      nav("/search");
+      return;
     }
-  };
 
-  const toggle = async () => {
     const r = recognitionRef.current;
-    if (!r) return;
+    if (!r) {
+      console.error('No recognition instance available');
+      nav("/search");
+      return;
+    }
 
+    // If currently listening, stop
     if (listening) {
-      r.stop();
+      console.log('Stopping speech recognition');
+      try {
+        r.stop();
+      } catch (error) {
+        console.error('Error stopping recognition:', error);
+      }
       setListening(false);
       return;
     }
 
-    // Check microphone permission first
-    if (!permissionGranted) {
-      const hasPermission = await requestMicrophonePermission();
-      if (!hasPermission) return;
-    }
-
+    // Start recognition
     try {
-      console.log('Starting speech recognition');
+      console.log('Attempting to start speech recognition...');
+      
+      // Request microphone permission first
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        console.log('Microphone permission granted');
+        stream.getTracks().forEach(track => track.stop());
+        setPermissionState('granted');
+      } catch (permError) {
+        console.error('Microphone permission denied:', permError);
+        setPermissionState('denied');
+        toast({
+          title: "Microphone access required",
+          description: "Please allow microphone access and try again",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Now start speech recognition
       r.start();
       setListening(true);
+      console.log('Speech recognition started successfully');
+      
       toast({
         title: "Listening...",
         description: "Speak your search query now",
       });
+      
     } catch (error) {
       console.error('Error starting speech recognition:', error);
       setListening(false);
+      
       toast({
         title: "Voice search unavailable",
-        description: "Please try again or use text search",
-        variant: "destructive",
+        description: "Using text search instead",
       });
+      
+      // Fallback to regular search
+      nav("/search");
     }
   };
 
-  if (!supported) {
-    return (
-      <Button 
-        variant="fab"
-        onClick={() => nav("/search")}
-        style={{ width: size, height: size }}
-      > 
-        <Mic className="h-6 w-6" />
-      </Button>
-    );
-  }
-
+  // Always render as a button that works
   return (
     <button
       aria-label={listening ? "Stop listening" : "Start voice search"}
-      onClick={toggle}
+      onClick={handleClick}
       className={`rounded-full flex items-center justify-center text-primary-foreground shadow-glow transition-all duration-200 ${
         listening 
           ? "bg-accent animate-pulse" 
-          : permissionGranted === false 
+          : permissionState === 'denied' 
             ? "bg-destructive" 
             : "bg-gradient-primary hover:opacity-90"
       }`}
@@ -161,7 +169,7 @@ export default function MicButton({ size = 64 }: { size?: number }) {
     >
       {listening ? (
         <Square className="h-7 w-7" />
-      ) : permissionGranted === false ? (
+      ) : permissionState === 'denied' ? (
         <MicOff className="h-7 w-7" />
       ) : (
         <Mic className="h-7 w-7" />
