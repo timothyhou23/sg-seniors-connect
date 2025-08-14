@@ -6,6 +6,7 @@ import { useAppState } from "@/context/AppState";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useFeed } from "@/hooks/useFeed";
+import { useToast } from "@/hooks/use-toast";
 
 const TABS = ["All", "Benefits", "Events"] as const;
 
@@ -15,6 +16,7 @@ export default function Home() {
   const { bookmarks, toggleBookmark, addReminder } = useAppState();
   const { feed, loading, error, refreshFeed } = useFeed();
   const [tab, setTab] = useState<Tab>("All");
+  const { toast } = useToast();
   useEffect(() => { document.title = "SeniorGo SG — Home"; }, []);
 
   const list = useMemo(() => feed.filter(i => tab === "All" || (tab === "Benefits" && i.type === "benefit") || (tab === "Events" && i.type === "event")), [feed, tab]);
@@ -85,11 +87,29 @@ export default function Home() {
                 <Button 
                   size="sm" 
                   variant="outline" 
-                  onClick={() => navigator.share?.({ 
-                    title: item.title, 
-                    text: item.summary, 
-                    url: `${window.location.origin}/details/${item.type}/${item.id}` 
-                  })}
+                  onClick={() => {
+                    const url = `${window.location.origin}/details/${item.type}/${item.id}`;
+                    if (navigator.share) {
+                      navigator.share({ 
+                        title: item.title, 
+                        text: item.summary, 
+                        url: url 
+                      });
+                    } else {
+                      // Fallback: copy to clipboard
+                      navigator.clipboard?.writeText(`${item.title} - ${item.summary} ${url}`)
+                        .then(() => {
+                          toast({
+                            title: "Link copied!",
+                            description: "Link copied to clipboard"
+                          });
+                        })
+                        .catch(() => {
+                          // Final fallback: just open the URL
+                          window.open(url, '_blank');
+                        });
+                    }
+                  }}
                 >
                   <Share2 className="h-4 w-4" />
                   <span className="hidden sm:inline ml-1">Share</span>
@@ -100,6 +120,11 @@ export default function Home() {
                     itemType: item.type,
                     title: `Reminder: ${item.title}`,
                     scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+                  });
+                  // Show feedback
+                  toast({
+                    title: "Reminder set!",
+                    description: "You'll be reminded tomorrow"
                   });
                 }}>
                   <Bell className="h-4 w-4" />

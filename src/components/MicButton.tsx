@@ -83,15 +83,22 @@ export default function MicButton({ size = 64 }: { size?: number }) {
   const handleClick = async () => {
     console.log('Mic button clicked, current state:', { listening, supported, permissionState });
     
-    // If not supported, navigate to search
+    // If not supported, navigate to search with helpful message
     if (!supported) {
+      toast({
+        title: "Voice search not available",
+        description: "Using text search instead",
+      });
       nav("/search");
       return;
     }
 
     const r = recognitionRef.current;
     if (!r) {
-      console.error('No recognition instance available');
+      toast({
+        title: "Voice search not available",
+        description: "Using text search instead",
+      });
       nav("/search");
       return;
     }
@@ -108,9 +115,14 @@ export default function MicButton({ size = 64 }: { size?: number }) {
       return;
     }
 
-    // Start recognition
+    // Start recognition with better error handling
     try {
       console.log('Attempting to start speech recognition...');
+      
+      // Check if getUserMedia is available
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Media devices not supported');
+      }
       
       // Request microphone permission first
       try {
@@ -122,10 +134,12 @@ export default function MicButton({ size = 64 }: { size?: number }) {
         console.error('Microphone permission denied:', permError);
         setPermissionState('denied');
         toast({
-          title: "Microphone access required",
-          description: "Please allow microphone access and try again",
+          title: "Microphone access needed",
+          description: "Please allow microphone access in your browser settings",
           variant: "destructive",
         });
+        // Still navigate to search as fallback
+        setTimeout(() => nav("/search"), 2000);
         return;
       }
 
@@ -142,6 +156,7 @@ export default function MicButton({ size = 64 }: { size?: number }) {
     } catch (error) {
       console.error('Error starting speech recognition:', error);
       setListening(false);
+      setPermissionState('denied');
       
       toast({
         title: "Voice search unavailable",
