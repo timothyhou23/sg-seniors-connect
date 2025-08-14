@@ -11,7 +11,9 @@ export default function MicButton({ size = 64 }: { size?: number }) {
 
   useEffect(() => {
     // Web Speech API availability
+    console.log('Checking speech recognition support');
     const SR: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    console.log('Speech Recognition available:', !!SR);
     if (SR) {
       setSupported(true);
       const r = new SR();
@@ -19,15 +21,24 @@ export default function MicButton({ size = 64 }: { size?: number }) {
       r.interimResults = true;
       r.maxAlternatives = 1;
       r.onresult = (e: any) => {
+        console.log('Speech recognition result:', e.results);
         const last = e.results[e.results.length - 1];
         if (last.isFinal) {
           const transcript = last[0].transcript;
+          console.log('Final transcript:', transcript);
           nav(`/search?q=${encodeURIComponent(transcript)}`);
           setListening(false);
           r.stop();
         }
       };
-      r.onend = () => setListening(false);
+      r.onerror = (e: any) => {
+        console.error('Speech recognition error:', e.error);
+        setListening(false);
+      };
+      r.onend = () => {
+        console.log('Speech recognition ended');
+        setListening(false);
+      };
       recognitionRef.current = r;
     }
   }, [nav]);
@@ -40,9 +51,12 @@ export default function MicButton({ size = 64 }: { size?: number }) {
       setListening(false);
     } else {
       try {
+        console.log('Starting speech recognition');
         r.start();
         setListening(true);
-      } catch {}
+      } catch (error) {
+        console.error('Error starting speech recognition:', error);
+      }
     }
   };
 
