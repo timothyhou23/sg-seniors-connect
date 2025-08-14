@@ -42,9 +42,17 @@ export default function Home() {
 
   return (
     <AppLayout title="My Lobang Kaki" subtitle="Try: events near Bishan this weekend">
-      <div className="flex gap-2 mb-4">
+      <div className="flex flex-wrap gap-2 mb-4">
         {TABS.map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`px-3 py-2 rounded-full border ${tab===t?"bg-primary text-primary-foreground":"bg-secondary text-secondary-foreground"}`}>
+          <button 
+            key={t} 
+            onClick={() => setTab(t)} 
+            className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors ${
+              tab === t 
+                ? "bg-primary text-primary-foreground border-primary" 
+                : "bg-background text-muted-foreground border-border hover:bg-accent hover:text-accent-foreground"
+            }`}
+          >
             {t}
           </button>
         ))}
@@ -66,25 +74,36 @@ export default function Home() {
               {item.type === 'event' && (
                 <p className="text-sm text-muted-foreground mb-2">{(item as any).event_date && new Date((item as any).event_date).toLocaleString()} • {item.venue?.name} {item.distanceKm?`• ${item.distanceKm}km`:''}</p>
               )}
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Link to={`/details/${item.type}/${item.id}`}>
                   <Button size="sm" variant="hero">View Details</Button>
                 </Link>
                 <Button size="sm" variant="outline" onClick={() => toggleBookmark(item.id)}>
-                  <Bookmark className="mr-1" /> {bookmarks.includes(item.id)?'Saved':'Save'}
+                  <Bookmark className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-1">{bookmarks.includes(item.id) ? 'Saved' : 'Save'}</span>
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => navigator.share?.({ title: item.title, text: item.summary, url: window.location.href })}>
-                  <Share2 className="mr-1" /> Share
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={() => navigator.share?.({ 
+                    title: item.title, 
+                    text: item.summary, 
+                    url: `${window.location.origin}/details/${item.type}/${item.id}` 
+                  })}
+                >
+                  <Share2 className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-1">Share</span>
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => {
                   addReminder({
                     itemId: item.id,
                     itemType: item.type,
                     title: `Reminder: ${item.title}`,
-                    scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours from now
+                    scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
                   });
                 }}>
-                  <Bell className="mr-1" /> Remind me
+                  <Bell className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-1">Remind</span>
                 </Button>
               </div>
             </CardContent>
